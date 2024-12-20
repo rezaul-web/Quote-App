@@ -10,15 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.quotegeneratorapp.screens.HomeScreen
 import com.example.quotegeneratorapp.ui.theme.QuoteGeneratorAppTheme
@@ -27,7 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,20 +35,10 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         TopAppBarItems()
                     },
-                    floatingActionButton = {
-                        FloatingActionButton(onClick = {
 
-                        },
-                            containerColor = Color.White,) {
-                            Text(
-                                text = "+",
-                                fontSize = 34.sp,
-                                color = Color.Red,
-                            )
-                        }
-                    }
 
                 ) { innerPadding ->
+
                     val homeViewmodel: HomeViewmodel by viewModels()
                     HomeScreen(
                         modifier = Modifier.padding(innerPadding),
@@ -70,14 +58,14 @@ class MainActivity : ComponentActivity() {
                 containerColor = Color.Cyan,
                 titleContentColor = Color.Black,
                 navigationIconContentColor = Color.Black,
-                actionIconContentColor = Color.Red
+                actionIconContentColor = Color.Cyan
             ),
             actions = {
-                Button(
+                TextButton (
                     onClick = {},
-                    colors = ButtonDefaults.buttonColors(Color.Red)
+                    colors = ButtonDefaults.buttonColors(Color.Cyan)
                 ) {
-                    Text("Logout")
+                    Text("Saved Quotes", fontSize = 18.sp)
                 }
 
             }

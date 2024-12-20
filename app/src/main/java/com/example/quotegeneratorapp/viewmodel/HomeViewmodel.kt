@@ -16,6 +16,11 @@ import javax.inject.Inject
 class HomeViewmodel @Inject constructor(
     private val quoteRepository: QuoteRepository
 ) : ViewModel() {
+    private val _isSaved = MutableStateFlow(true)
+    val isSaved: StateFlow<Boolean> = _isSaved
+    fun saveQuote() {
+        _isSaved.value = false
+    }
 
     private val _uiState = MutableStateFlow<UIState<Quote>>(UIState.Loading)
     val uiState: StateFlow<UIState<Quote>> = _uiState

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quotegeneratorapp.model.QuoteItem
+import com.example.quotegeneratorapp.viewmodel.DatabaseViewModel
 import com.example.quotegeneratorapp.viewmodel.HomeViewmodel
 import com.example.quotegeneratorapp.viewmodel.UIState
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewmodel = hiltViewModel()
+    viewModel: HomeViewmodel = hiltViewModel(),
+    databaseViewModel: DatabaseViewModel = hiltViewModel()
 ) {
     val randomQuoteState = viewModel.uiState.collectAsState()
     val buttonState = viewModel.buttonState.collectAsState()
@@ -46,6 +49,8 @@ fun HomeScreen(
             }
 
             is UIState.Success -> {
+
+
                 QuoteView(
                     quote = state.data[0]
                 )
@@ -64,7 +69,9 @@ fun HomeScreen(
                 CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
             } else {
                 Button(
-                    onClick = { viewModel.updateState() },
+                    onClick = {
+                        viewModel.updateState()
+                    },
                     modifier = Modifier.align(Alignment.Center)
                 ) {
                     Text(text = "Generate")
@@ -73,11 +80,32 @@ fun HomeScreen(
 
 
         }
+        val isSavedState = viewModel.isSaved.collectAsState()
+        Spacer(modifier = Modifier.size(34.dp))
+        Button(onClick = {
+            val state = randomQuoteState.value
+            if (state is UIState.Success) {
+                databaseViewModel.insertQuote(state.data[0])
+                viewModel.saveQuote()
+            }
+        },enabled = isSavedState.value,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Cyan,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.Black
+            )
+            ) {
+            if (!isSavedState.value) {
+                Text(text = "Saved")
+            } else {
+                Text(text = "Save")
+            }
+        }
 
 
     }
-    }
-
+}
 
 
 @Composable
