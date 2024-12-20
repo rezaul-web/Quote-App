@@ -17,11 +17,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.quotegeneratorapp.model.QuoteItem
+import androidx.navigation.NavController
 import com.example.quotegeneratorapp.viewmodel.DatabaseViewModel
 import com.example.quotegeneratorapp.viewmodel.HomeViewmodel
 import com.example.quotegeneratorapp.viewmodel.UIState
@@ -30,10 +28,12 @@ import com.example.quotegeneratorapp.viewmodel.UIState
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewmodel = hiltViewModel(),
-    databaseViewModel: DatabaseViewModel = hiltViewModel()
+    databaseViewModel: DatabaseViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val randomQuoteState = viewModel.uiState.collectAsState()
     val buttonState = viewModel.buttonState.collectAsState()
+    val isSavedState = viewModel.isSaved.collectAsState()
 
     Column(
         modifier = Modifier
@@ -71,6 +71,7 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         viewModel.updateState()
+                        viewModel.saveQuote(true)
                     },
                     modifier = Modifier.align(Alignment.Center)
                 ) {
@@ -80,55 +81,28 @@ fun HomeScreen(
 
 
         }
-        val isSavedState = viewModel.isSaved.collectAsState()
         Spacer(modifier = Modifier.size(34.dp))
-        Button(onClick = {
-            val state = randomQuoteState.value
-            if (state is UIState.Success) {
-                databaseViewModel.insertQuote(state.data[0])
-                viewModel.saveQuote()
-            }
-        },enabled = isSavedState.value,
+        Button(
+            onClick = {
+                val state = randomQuoteState.value
+                if (state is UIState.Success) {
+                    databaseViewModel.insertQuote(state.data[0])
+                    viewModel.saveQuote(false)
+                }
+            }, enabled = isSavedState.value,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Cyan,
                 contentColor = Color.Black,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.Black
             )
-            ) {
+        ) {
             if (!isSavedState.value) {
                 Text(text = "Saved")
             } else {
                 Text(text = "Save")
             }
         }
-
-
-    }
-}
-
-
-@Composable
-fun QuoteView(
-    modifier: Modifier = Modifier, quote: QuoteItem
-) {
-    Column {
-        Text(
-            text = quote.q,
-            fontSize = 24.sp,
-            fontFamily = FontFamily.SansSerif,
-            modifier = Modifier.padding(8.dp),
-            color = Color.Black
-        )
-        Text(
-            text = quote.a,
-            fontSize = 14.sp,
-            fontFamily = FontFamily.SansSerif,
-            modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.End),
-            color = Color.Black
-        )
 
 
     }

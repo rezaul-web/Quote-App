@@ -18,20 +18,28 @@ import javax.inject.Inject
 @HiltViewModel
 class DatabaseViewModel @Inject constructor(
     private val quoteDao: QuoteDao
-): ViewModel() {
+) : ViewModel() {
+
     private val _allQuotes = MutableStateFlow<List<QuoteItem>>(emptyList())
     val allQuotes: StateFlow<List<QuoteItem>> = _allQuotes
-
-
-    // Initialize and start collecting quotes when the ViewModel is created
-     fun insertQuote(quoteItem: QuoteItem) {
+init {
+    getAllQuotes()
+}
+    // Insert a quote item into the database
+    fun insertQuote(quoteItem: QuoteItem) {
         viewModelScope.launch {
+            // Ensure insert happens on a background thread
             quoteDao.insert(quoteItem)
         }
-
-
     }
-    suspend fun getAllQuotes()= withContext(Dispatchers.IO){
-        quoteDao.getAllQuotes()
+
+    // Get all quotes from the database and collect them
+    private fun getAllQuotes() {
+        viewModelScope.launch {
+            quoteDao.getAllQuotes().collect { quotes ->
+                _allQuotes.value = quotes
+            }
+        }
     }
 }
+

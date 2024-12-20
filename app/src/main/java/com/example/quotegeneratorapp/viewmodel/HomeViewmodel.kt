@@ -18,8 +18,8 @@ class HomeViewmodel @Inject constructor(
 ) : ViewModel() {
     private val _isSaved = MutableStateFlow(true)
     val isSaved: StateFlow<Boolean> = _isSaved
-    fun saveQuote() {
-        _isSaved.value = false
+    fun saveQuote(value:Boolean) {
+        _isSaved.value = value
     }
 
     private val _uiState = MutableStateFlow<UIState<Quote>>(UIState.Loading)
