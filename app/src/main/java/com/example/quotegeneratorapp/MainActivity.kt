@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                             HomeScreen(
                                 modifier = Modifier.padding(innerPadding),
-                                viewModel = homeViewmodel
+                                homeViewmodel = homeViewmodel
                             )
 
                         }

@@ -27,12 +27,12 @@ import com.example.quotegeneratorapp.viewmodel.UIState
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewmodel = hiltViewModel(),
+    homeViewmodel: HomeViewmodel = hiltViewModel(),
     databaseViewModel: DatabaseViewModel = hiltViewModel()
 ) {
-    val randomQuoteState = viewModel.uiState.collectAsState()
-    val buttonState = viewModel.buttonState.collectAsState()
-    val isSavedState = viewModel.isSaved.collectAsState()
+    val randomQuoteState = homeViewmodel.uiState.collectAsState()
+    val buttonState = homeViewmodel.buttonState.collectAsState()
+    val isSavedState = homeViewmodel.isSaved.collectAsState()
 
     Column(
         modifier = Modifier
@@ -69,8 +69,8 @@ fun HomeScreen(
             } else {
                 Button(
                     onClick = {
-                        viewModel.updateState()
-                        viewModel.updateSaveQuoteButtonState(true)
+                        homeViewmodel.updateState()
+                        homeViewmodel.updateSaveQuoteButtonState(true)
                     },
                     modifier = Modifier.align(Alignment.Center)
                 ) {
@@ -86,7 +86,7 @@ fun HomeScreen(
                 val state = randomQuoteState.value
                 if (state is UIState.Success) {
                     databaseViewModel.insertQuote(state.data[0])
-                    viewModel.updateSaveQuoteButtonState(false)
+                    homeViewmodel.updateSaveQuoteButtonState(false)
                 }
             },
             enabled = isSavedState.value,
