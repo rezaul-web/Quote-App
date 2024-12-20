@@ -41,5 +41,16 @@ init {
             }
         }
     }
+
+    fun deleteQuote(quoteItem: QuoteItem) {
+        viewModelScope.launch {
+            quoteDao.delete(quoteItem)
+        }
+    }
+    fun deleteAllQuote() {
+        viewModelScope.launch {
+            quoteDao.deleteAll()
+        }
+    }
 }
 

@@ -8,7 +8,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -17,6 +16,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
@@ -24,7 +25,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Database
 import com.example.quotegeneratorapp.screens.HomeScreen
 import com.example.quotegeneratorapp.screens.SavedQuotesScreen
 import com.example.quotegeneratorapp.ui.theme.QuoteGeneratorAppTheme
@@ -38,12 +38,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController= rememberNavController()
 
+            val navController= rememberNavController()
+            val showTopBar = remember { mutableStateOf(true) } // State to control visibility
+
+            // Update top bar visibility based on current destination
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                showTopBar.value = when (destination.route) {
+                    "home" -> true // Show top bar on "home"
+                    "saved" -> false // Show top bar on "saved"
+                    else -> false // Hide top bar on other screens
+                }
+            }
             QuoteGeneratorAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        TopAppBarItems(navController=navController)
+                        if (showTopBar.value){
+                            TopAppBarItems(navController=navController)
+                        }
                     },
 
 
@@ -51,17 +63,19 @@ class MainActivity : ComponentActivity() {
                     val homeViewmodel: HomeViewmodel by viewModels()
                     val databaseViewModel:DatabaseViewModel by viewModels()
                     NavHost(navController = navController, startDestination = "home") {
-                        composable("home",) {
+                        composable("home",
+
+                            ) {
                             HomeScreen(
                                 modifier = Modifier.padding(innerPadding),
-                                viewModel = homeViewmodel,
-                                navController = navController
+                                viewModel = homeViewmodel
                             )
 
                         }
                         composable("saved") {
 
-                            SavedQuotesScreen(databaseViewModel = databaseViewModel)
+                            SavedQuotesScreen(databaseViewModel = databaseViewModel
+                            )
                         }
                     }
 

@@ -18,8 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.quotegeneratorapp.viewmodel.DatabaseViewModel
 import com.example.quotegeneratorapp.viewmodel.HomeViewmodel
 import com.example.quotegeneratorapp.viewmodel.UIState
@@ -28,8 +28,7 @@ import com.example.quotegeneratorapp.viewmodel.UIState
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewmodel = hiltViewModel(),
-    databaseViewModel: DatabaseViewModel = hiltViewModel(),
-    navController: NavController
+    databaseViewModel: DatabaseViewModel = hiltViewModel()
 ) {
     val randomQuoteState = viewModel.uiState.collectAsState()
     val buttonState = viewModel.buttonState.collectAsState()
@@ -71,11 +70,11 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         viewModel.updateState()
-                        viewModel.saveQuote(true)
+                        viewModel.updateSaveQuoteButtonState(true)
                     },
                     modifier = Modifier.align(Alignment.Center)
                 ) {
-                    Text(text = "Generate")
+                    Text(text = "Generate", fontSize = 18.sp)
                 }
             }
 
@@ -87,20 +86,21 @@ fun HomeScreen(
                 val state = randomQuoteState.value
                 if (state is UIState.Success) {
                     databaseViewModel.insertQuote(state.data[0])
-                    viewModel.saveQuote(false)
+                    viewModel.updateSaveQuoteButtonState(false)
                 }
-            }, enabled = isSavedState.value,
+            },
+            enabled = isSavedState.value,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Cyan,
                 contentColor = Color.Black,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.Black
-            )
+            ),
         ) {
             if (!isSavedState.value) {
-                Text(text = "Saved")
+                Text(text = "Saved", fontSize = 18.sp)
             } else {
-                Text(text = "Save")
+                Text(text = "Save", fontSize = 18.sp)
             }
         }
 

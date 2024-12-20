@@ -18,7 +18,7 @@ class HomeViewmodel @Inject constructor(
 ) : ViewModel() {
     private val _isSaved = MutableStateFlow(true)
     val isSaved: StateFlow<Boolean> = _isSaved
-    fun saveQuote(value:Boolean) {
+    fun updateSaveQuoteButtonState(value:Boolean) {
         _isSaved.value = value
     }
 
